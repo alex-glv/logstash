@@ -5,7 +5,6 @@ import com.github.dockerjava.api.InternalServerErrorException;
 import com.github.dockerjava.api.model.Container;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.DockerClientConfig;
-import org.apache.mesos.logstash.common.LogstashConstants;
 import org.apache.mesos.logstash.common.LogstashProtos.ExecutorMessage;
 import org.apache.mesos.logstash.config.ConfigManager;
 import org.apache.mesos.logstash.config.Configuration;
@@ -34,7 +33,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public abstract class AbstractLogstashFrameworkTest {
 
     public static final MesosClusterConfig clusterConfig = MesosClusterConfig.builder()
-        .numberOfSlaves(1).privateRegistryPort(3333).proxyPort(12345)
+        .numberOfSlaves(1)
         .slaveResources(new String[]{"ports(*):[9299-9299,9300-9300]"})
         .build();
 
@@ -53,11 +52,6 @@ public abstract class AbstractLogstashFrameworkTest {
     protected ConfigManager configManager;
     public LogstashExecutorContainer executorContainer;
 
-    @BeforeClass
-    public static void publishExecutorInMesosCluster() throws IOException {
-
-        cluster.injectImage(LogstashConstants.EXECUTOR_IMAGE_NAME, LogstashConstants.EXECUTOR_IMAGE_TAG);
-    }
 
     public void startContainer(AbstractContainer container) {
         container.start();
