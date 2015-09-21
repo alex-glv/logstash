@@ -12,11 +12,11 @@ import java.util.List;
 public class LocalCluster {
 
     private static final String DOCKER_PORT = "2376";
-    public final MesosCluster cluster = MesosClusterConfig.builder()
+    public final MesosCluster cluster = new MesosCluster(MesosClusterConfig.builder()
         .numberOfSlaves(1)
         .privateRegistryPort(3333)
         .slaveResources(new String[]{"ports(*):[9299-9299,9300-9300]"})
-        .build();
+        .build());
 
     public static void main(String[] args) throws Exception {
         new LocalCluster().run();
@@ -32,7 +32,7 @@ public class LocalCluster {
         DockerClient clusterDockerClient = DockerClientBuilder
             .getInstance(dockerConfigBuilder.build()).build();
 
-        cluster.injectImage("mesos/logstash-executor");
+//        cluster.injectImage("mesos/logstash-executor");
 
         DummyFrameworkContainer dummyFrameworkContainer = new DummyFrameworkContainer(
             clusterDockerClient, "dummy-framework");

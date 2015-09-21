@@ -13,7 +13,7 @@ public class Configuration {
 
     private String zookeeperUrl = null;
     private SerializableState state = null;
-    private double executorCpus = 0;
+    private double executorCpus = 0.1;
     private int executorHeapSize = 0;
     private int logstashHeapSize = 0;
     private String frameworkName = "logstash";

@@ -38,7 +38,7 @@ public class LogstashService {
     }
 
     public void start() {
-        executorService.scheduleWithFixedDelay(this::run, 0, 1, TimeUnit.SECONDS);
+//        executorService.scheduleWithFixedDelay(this::run, 0, 1, TimeUnit.SECONDS);
     }
 
     public void stop() {

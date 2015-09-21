@@ -1,11 +1,10 @@
 package org.apache.mesos.logstash.executor;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.mesos.Executor;
 import org.apache.mesos.ExecutorDriver;
 import org.apache.mesos.Protos;
-import org.apache.mesos.logstash.executor.docker.DockerClient;
-import org.apache.mesos.logstash.executor.state.LiveState;
+//import org.apache.mesos.logstash.executor.docker.DockerClient;
+//import org.apache.mesos.logstash.executor.state.LiveState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,21 +15,19 @@ import static org.apache.mesos.logstash.common.LogstashProtos.LogstashConfig;
 import static org.apache.mesos.logstash.common.LogstashProtos.LogstashConfig.LogstashConfigType.DOCKER;
 import static org.apache.mesos.logstash.common.LogstashProtos.LogstashConfig.LogstashConfigType.HOST;
 import static org.apache.mesos.logstash.common.LogstashProtos.SchedulerMessage;
-import static org.apache.mesos.logstash.common.LogstashProtos.SchedulerMessage.SchedulerMessageType.REQUEST_STATS;
 
 public class LogstashExecutor implements Executor {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(LogstashExecutor.class.toString());
 
     private final ConfigManager configManager;
-    private final LiveState liveState;
-    private final DockerClient dockerClient;
+//    private final LiveState liveState;
+//    private final DockerClient dockerClient;
 
-    public LogstashExecutor(ConfigManager configManager, DockerClient dockerClient,
-        LiveState liveState) {
-        this.configManager = configManager;
-        this.dockerClient = dockerClient;
-        this.liveState = liveState;
+    public LogstashExecutor() {
+        LOGGER.info("In executor constructor");
+        this.configManager = null;
+//        this.liveState = null;
     }
 
     @Override
@@ -38,11 +35,15 @@ public class LogstashExecutor implements Executor {
 
         LOGGER.info("Notifying scheduler that executor has started.");
 
+        System.out.println(String.format("(executor) Launching before task: %s", task.getName()));
+
         // TODO send TASK_RUNNING status only if we can talk to the docker daemon and whatever we need for running logstash
         driver.sendStatusUpdate(Protos.TaskStatus.newBuilder()
             .setExecutorId(task.getExecutor().getExecutorId())
             .setTaskId(task.getTaskId())
-            .setState(Protos.TaskState.TASK_RUNNING).build());
+                .setState(Protos.TaskState.TASK_RUNNING).build());
+
+        System.out.println(String.format("(executor) Launching task: %s", task.getName()));
     }
 
     @Override
@@ -59,19 +60,19 @@ public class LogstashExecutor implements Executor {
     @Override
     public void frameworkMessage(ExecutorDriver driver, byte[] data) {
 
-        try {
-            SchedulerMessage message = SchedulerMessage.parseFrom(data);
-
-            LOGGER.info("SchedulerMessage. message={}", message);
-
-            if (message.getType().equals(REQUEST_STATS)) {
-                sendStatsToScheduler(driver);
-            } else {
-                updateConfig(message);
-            }
-        } catch (InvalidProtocolBufferException e) {
-            LOGGER.error("Error parsing framework message from scheduler.", e);
-        }
+//        try {
+//            SchedulerMessage message = SchedulerMessage.parseFrom(data);
+//
+//            LOGGER.info("SchedulerMessage. message={}", message);
+//
+//            if (message.getType().equals(REQUEST_STATS)) {
+//                sendStatsToScheduler(driver);
+//            } else {
+//                updateConfig(message);
+//            }
+//        } catch (InvalidProtocolBufferException e) {
+//            LOGGER.error("Error parsing framework message from scheduler.", e);
+//        }
     }
 
     private void updateConfig(SchedulerMessage message) {
@@ -87,7 +88,7 @@ public class LogstashExecutor implements Executor {
     }
 
     private void sendStatsToScheduler(ExecutorDriver driver) {
-        driver.sendFrameworkMessage(liveState.getStateAsExecutorMessage().toByteArray());
+//        driver.sendFrameworkMessage(liveState.getStateAsExecutorMessage().toByteArray());
 
     }
 
@@ -107,9 +108,15 @@ public class LogstashExecutor implements Executor {
     public void registered(ExecutorDriver driver, Protos.ExecutorInfo executorInfo,
         Protos.FrameworkInfo frameworkInfo, Protos.SlaveInfo slaveInfo) {
         LOGGER.info("LogstashExecutor Logstash registered. slaveId={}", slaveInfo.getId());
-
-        liveState.setHostName(slaveInfo.getHostname());
-        dockerClient.startupComplete(slaveInfo.getHostname());
+//
+//        liveState.setHostName(slaveInfo.getHostname());
+//        String dockerHost = System.getenv("DOCKER_HOST");
+//        if (dockerHost.isEmpty()) {
+//            dockerHost = "http://" + slaveInfo.getHostname() + ":2376";
+//        }
+//        LOGGER.info("Using docker client endpoint: " + dockerHost);
+//        dockerClient.startupComplete(dockerHost);
+//
     }
 
     @Override

@@ -1,6 +1,5 @@
 package org.apache.mesos.logstash.executor.docker;
 
-import com.spotify.docker.client.DefaultDockerClient;
 import com.spotify.docker.client.DockerException;
 import com.spotify.docker.client.messages.Container;
 import org.apache.mesos.logstash.common.ConcurrentUtils;
@@ -8,14 +7,10 @@ import org.apache.mesos.logstash.executor.logging.LogStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-
-import static java.util.concurrent.TimeUnit.HOURS;
 
 public class DockerClient {
 
@@ -40,23 +35,23 @@ public class DockerClient {
     }
 
     public void start() {
-        executorService.scheduleWithFixedDelay(this::updateContainerState, 0, 5, TimeUnit.SECONDS);
+//        executorService.scheduleWithFixedDelay(this::updateContainerState, 0, 5, TimeUnit.SECONDS);
     }
 
     public void stop() {
         ConcurrentUtils.stop(executorService);
     }
 
-    public void startupComplete(String hostName) {
+    public void startupComplete(String dockerHost) {
         // There is currently no what (what we know of) to reliably
         // get the address of the host we are running on without waiting
         // for the executor to register itself. This is called by the
         // executor itself.
 
-        this.dockerClient = DefaultDockerClient.builder()
-            .readTimeoutMillis(HOURS.toMillis(1))
-            .uri(URI.create("http://" + hostName + ":2376"))
-            .build();
+//        this.dockerClient = DefaultDockerClient.builder()
+//            .readTimeoutMillis(HOURS.toMillis(1))
+//            .uri(URI.create(dockerHost))
+//            .build();
     }
 
     public Set<String> getRunningContainers() {
